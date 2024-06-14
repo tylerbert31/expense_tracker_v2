@@ -6,30 +6,25 @@ import {
   Table,
   TableCell,
 } from "@/components/ui/table";
-import BarChart from "./barchart";
-import {
-  Today,
-  ThisWeek,
-  ThisMonth,
-  PastWeek,
-  PastMonth,
-  Expenses,
-} from "@/lib/model/pocketbase";
-import numeral from "numeral";
+import { Expenses } from "@/lib/model/pocketbase";
 import { unstable_noStore as noCache } from "next/cache";
 import { formatDistance } from "date-fns";
 import Github from "../ui/github_svg";
 import { Suspense } from "react";
+import {
+  TodayCard,
+  Last7DaysCard,
+  Last30DaysCard,
+  CardTemplateLoader,
+} from "./minified/card";
+import {
+  Prev30Days,
+  Prev7Days,
+  BarGraphTemplateLoader,
+} from "./minified/bargraph";
 
 export async function Expense() {
   noCache();
-  // cards
-  const today = await Today.getToday();
-  const pastweek = await PastWeek.getToday();
-  const pastmonth = await PastMonth.getToday();
-  // bar graphs
-  const thisWeek = await Expenses.sumThisWeek();
-  const pastWeeks = await Expenses.sumPastWeeks();
   // recent purchase list
   const items: any = await Expenses.findPaginated(10, {
     sort: "-created",
@@ -43,37 +38,23 @@ export async function Expense() {
       </header>
       <main className="flex-1 p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-lg font-bold mb-2">Today</h2>
-            <p className="text-4xl font-bold">
-              ₱{" "}
-              {today?.total_expenses
-                ? numeral(today?.total_expenses).format("0.0a")
-                : 0}
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-lg font-bold mb-2">Last 7 Days</h2>
-            <p className="text-4xl font-bold">
-              ₱ {numeral(pastweek?.total_expenses ?? 0).format("0.00a")}
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-lg font-bold mb-2">Last 30 Days</h2>
-            <p className="text-4xl font-bold">
-              ₱ {numeral(pastmonth?.total_expenses ?? 0).format("0.00a")}
-            </p>
-          </div>
+          <Suspense fallback={<CardTemplateLoader />}>
+            <TodayCard />
+          </Suspense>
+          <Suspense fallback={<CardTemplateLoader />}>
+            <Last7DaysCard />
+          </Suspense>
+          <Suspense fallback={<CardTemplateLoader />}>
+            <Last30DaysCard />
+          </Suspense>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-lg font-bold mb-2">Previous 7 Days</h2>
-            <BarChart expense={thisWeek} className="aspect-[16/9]" />
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <h2 className="text-lg font-bold mb-2">Previous 5 Weeks</h2>
-            <BarChart expense={pastWeeks} className="aspect-[16/9]" />
-          </div>
+          <Suspense fallback={<BarGraphTemplateLoader />}>
+            <Prev7Days />
+          </Suspense>
+          <Suspense fallback={<BarGraphTemplateLoader />}>
+            <Prev30Days />
+          </Suspense>
         </div>
         <div className="bg-white rounded-lg shadow p-4 mt-4">
           <h2 className="text-lg font-bold mb-2">Recent</h2>
