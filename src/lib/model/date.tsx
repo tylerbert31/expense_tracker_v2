@@ -1,5 +1,7 @@
 import { getISOWeek, startOfWeek, addDays, format } from "date-fns";
 
+const daysNum = [0, 1, 2, 3, 4, 5, 6];
+
 class Days {
   daysLastWeek(pastWeek: number = 1) {
     const currentDate = new Date();
@@ -7,7 +9,7 @@ class Days {
       currentDate.getTime() - 7 * pastWeek * 24 * 60 * 60 * 1000
     ); // Subtract 7 days from current date
 
-    const dates = [...Array(7).keys()].map((i) => addDays(startOfLastWeek, i));
+    const dates = [...daysNum].map((i) => addDays(startOfLastWeek, i));
     const formattedDates = dates.map((date) => ({
       day: format(date, "EEEE"), // 'EEEE' gives the full day name (Monday, Tuesday, etc.)
       date_formatted: format(date, "MMM dd"),
@@ -22,9 +24,7 @@ class Days {
     const startOfThisWeek = startOfWeek(currentDate); // Start of current week (Sunday)
     const startOfRequestedWeek = addDays(startOfThisWeek, -7 * week); // Subtract requested number of weeks
 
-    const dates = [...Array(7).keys()].map((i) =>
-      addDays(startOfRequestedWeek, i)
-    );
+    const dates = [...daysNum].map((i) => addDays(startOfRequestedWeek, i));
     const formattedDates = dates.map((date) => ({
       day: format(date, "EEEE"), // 'EEEE' gives the full day name (Monday, Tuesday, etc.)
       date_formatted: format(date, "MMM dd"),
