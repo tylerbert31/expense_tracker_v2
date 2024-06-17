@@ -35,12 +35,12 @@ class AppModel {
     return res;
   }
 
-  async findPaginated(limit: number, conditions: any = null) {
+  async findPaginated(page: number = 1, limit: number, conditions: any = null) {
     limit = limit ?? 10;
     try {
       const res = await pb
         .collection(this.collection)
-        .getList(1, limit, conditions);
+        .getList(page, limit, conditions);
       return res;
     } catch (error) {
       return error;

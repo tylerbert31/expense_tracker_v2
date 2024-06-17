@@ -1,6 +1,7 @@
 import React from "react";
 import { Today, PastWeek, PastMonth } from "@/lib/model/pocketbase";
 import numeral from "numeral";
+import { unstable_noStore as noCache } from "next/cache";
 
 const CardTemplate = ({
   caption,
@@ -18,6 +19,7 @@ const CardTemplate = ({
 };
 
 const TodayCard = async () => {
+  noCache();
   const today = await Today.getToday();
   const caption: string = "Today";
   return (
