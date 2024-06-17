@@ -1,14 +1,5 @@
-import {
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableBody,
-  Table,
-  TableCell,
-} from "@/components/ui/table";
 import { Expenses } from "@/lib/model/pocketbase";
 import { unstable_noStore as noCache } from "next/cache";
-import { formatDistance } from "date-fns";
 import Github from "../ui/github_svg";
 import { Suspense } from "react";
 import {
@@ -22,6 +13,7 @@ import {
   Prev7Days,
   BarGraphTemplateLoader,
 } from "./minified/bargraph";
+import PurchaseTable from "./minified/table";
 
 export async function Expense() {
   noCache();
@@ -58,29 +50,7 @@ export async function Expense() {
         </div>
         <div className="bg-white rounded-lg shadow p-4 mt-4">
           <h2 className="text-lg font-bold mb-2">Recent</h2>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Purchased</TableHead>
-                <TableHead>Item</TableHead>
-                <TableHead>Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items &&
-                items.items.map((item: any) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      {formatDistance(item.created, new Date(), {
-                        addSuffix: true,
-                      })}
-                    </TableCell>
-                    <TableCell>{item.description}</TableCell>
-                    <TableCell>₱ {item.amount}</TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
+          <PurchaseTable />
         </div>
       </main>
     </div>
