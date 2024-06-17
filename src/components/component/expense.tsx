@@ -1,5 +1,3 @@
-import { Expenses } from "@/lib/model/pocketbase";
-import { unstable_noStore as noCache } from "next/cache";
 import Github from "../ui/github_svg";
 import { Suspense } from "react";
 import {
@@ -16,12 +14,6 @@ import {
 import PurchaseTable from "./minified/table";
 
 export async function Expense() {
-  noCache();
-  // recent purchase list
-  const items: any = await Expenses.findPaginated(10, {
-    sort: "-created",
-    filter: "type = false",
-  });
   return (
     <div className="flex flex-col h-full bg-gray-100 text-gray-900">
       <header className="bg-white p-4 shadow flex justify-between">

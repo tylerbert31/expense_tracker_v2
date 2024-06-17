@@ -9,9 +9,9 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 import { formatDistance } from "date-fns";
-import axios from "axios";
 import { getExpensePurchase } from "@/lib/hooks/hook";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 const queryClient = new QueryClient();
 
@@ -27,10 +27,20 @@ const PurchaseTable = () => {
 
 const PurchaseTableData = () => {
   // Todo: Implement pagination
-  const [page, setPage] = React.useState(1);
-  const { data, isLoading } = getExpensePurchase();
+  const [page, setPage] = React.useState<number>(1);
+  const { data, isLoading, refetch } = getExpensePurchase(page);
   const result = data?.data?.data;
   const items = result?.items;
+
+  const handleNextPage = () => {
+    setPage((prev) => prev + 1);
+    refetch();
+  };
+
+  const handlePrevPage = () => {
+    setPage((prev) => prev - 1);
+    refetch();
+  };
 
   return (
     <>
@@ -55,8 +65,33 @@ const PurchaseTableData = () => {
                 <TableCell>₱ {item.amount}</TableCell>
               </TableRow>
             ))}
+          {items && !isLoading && (
+            <TableRow className="hover:bg-[unset] dark:hover:bg-[unset]">
+              <TableCell
+                colSpan={3}
+                className="space-x-2 justify-center my-0 mx-auto"
+              >
+                <Button
+                  variant={"outline"}
+                  onClick={handlePrevPage}
+                  className="dark:bg-slate-50 text-gray-700"
+                  disabled={result.page === 1}
+                >
+                  Prev
+                </Button>
+                <Button
+                  variant={"outline"}
+                  onClick={handleNextPage}
+                  className="dark:bg-slate-50 text-gray-700"
+                  disabled={result.page === result.totalPages}
+                >
+                  Next
+                </Button>
+              </TableCell>
+            </TableRow>
+          )}
           {isLoading && (
-            <TableRow>
+            <TableRow className="hover:bg-[unset] dark:hover:bg-[unset]">
               <TableCell className="text-center" colSpan={3}>
                 Loading...
               </TableCell>
