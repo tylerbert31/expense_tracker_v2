@@ -8,7 +8,7 @@ export async function POST() {
 
     const channelId = channels.general; //General
 
-    sendDiscordMessage(channelId, message);
+    await sendDiscordMessage(channelId, message);
 
     return NextResponse.json({message: "message sent to channel!"},{ status: 200 });
 }
