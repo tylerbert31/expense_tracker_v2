@@ -8,9 +8,9 @@ export const channels = {
     test_channel: '1287672860780789782',
 }
 
-export default async function sendDiscordMessage(channelId: string, message: string): Promise<void> {
+export default async function sendDiscordMessage(channelId: string, message: string, bypass: Boolean = false): Promise<void> {
     console.log("Env:", env);
-    if (env !== "PRODUCTION") {
+    if (env !== "PRODUCTION" && !bypass) {
         channelId = channels.test_channel;
     }
 

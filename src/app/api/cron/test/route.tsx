@@ -12,3 +12,22 @@ export async function GET() {
 
     return NextResponse.json({message: "Test message sent to #test-channel!"},{ status: 200 });
 }
+
+export async function POST(req: Request) {
+    // Tinamaran code - temporary
+    const data = await req.json();
+    const { message, channelId } = data;
+
+    if(!message || !channelId) {
+        return NextResponse.json({message: "Missing message or channelId."},{ status: 400 });
+    }
+
+    try {
+        await sendDiscordMessage(channelId, message, true);
+    } catch (error) {
+        console.error("Error:", error);
+        return NextResponse.json({message: "Error sending message.", error: error},{ status: 400 });
+    }
+
+    return NextResponse.json({message: `Test message sent to ${channelId}`},{ status: 200 });
+}
