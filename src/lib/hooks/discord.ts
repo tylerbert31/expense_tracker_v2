@@ -49,6 +49,7 @@ export default async function sendDiscordMessage(channelId: string, message: str
             console.error('Stack trace:', error.stack);
         }
     } finally {
+        console.log('Destroying client connection');
         await client.destroy();
     }
 }
