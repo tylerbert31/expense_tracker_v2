@@ -2,11 +2,12 @@ import sendDiscordMessage from "@/lib/hooks/discord";
 import { NextResponse } from "next/server";
 
 const FDC_PB_URL = process.env.FDC_PB_URL;
+const devs_url = `${FDC_PB_URL}/fdc_devs/records?fields=discord_id`;
 
 export async function POST() {
-  const userIds = await fetch(`${FDC_PB_URL}/fdc_devs/records?fields=slack_id`)
+  const userIds = await fetch(devs_url)
     .then((res) => res.json())
-    .then((data) => data.items.map((item: any) => item.slack_id));
+    .then((data) => data.items.map((dev: any) => dev.discord_id));
 
   let message = `<@${userIds.join("> <@")}>`;
 
@@ -16,11 +17,13 @@ export async function POST() {
     .then((res) => res.json())
     .then((data) => data.items[0].choice);
 
+
   const lunchChoices = await fetch(
     `${FDC_PB_URL}/fdc_lunch_choices/records?filter=(id!='${prevLunch}')&fields=name,weight`
   )
     .then((res) => res.json())
     .then((data) => data.items);
+
 
   const totalWeight = lunchChoices.reduce(
     (sum: any, choice: any) => sum + choice.weight,
@@ -36,7 +39,11 @@ export async function POST() {
     return false;
   });
 
-  message += "\n`Today's Lunch is: " + selectedChoice.name + "`";
+  const today = new Date();
+  const formattedDate = today.toISOString().split('T')[0];
+
+  message += '\n```Date: ' + formattedDate;
+  message += "\nToday's Lunch: " + selectedChoice.name + "```";
 
   try {
     await sendDiscordMessage("1287663632859140147", message);
