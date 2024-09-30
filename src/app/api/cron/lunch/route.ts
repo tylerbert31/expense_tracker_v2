@@ -1,5 +1,6 @@
 import sendDiscordMessage from "@/lib/hooks/discord";
 import { NextResponse } from "next/server";
+import axios from "axios";
 
 const FDC_PB_URL = process.env.FDC_PB_URL;
 const devs_url = `${FDC_PB_URL}/fdc_devs/records?fields=discord_id`;
@@ -19,7 +20,7 @@ export async function POST() {
 
 
   const lunchChoices = await fetch(
-    `${FDC_PB_URL}/fdc_lunch_choices/records?filter=(id!='${prevLunch}')&fields=name,weight`
+    `${FDC_PB_URL}/fdc_lunch_choices/records?filter=(id!='${prevLunch}')&fields=id,name,weight`
   )
     .then((res) => res.json())
     .then((data) => data.items);
@@ -47,6 +48,12 @@ export async function POST() {
 
   try {
     await sendDiscordMessage("1287663632859140147", message);
+
+    if(process.env.ENVIRONMENT == "PRODUCTION") {
+      await axios.post(`${FDC_PB_URL}/fdc_prev_lunch/records`, {
+        choice: selectedChoice.id
+      });
+    }
   } catch (error) {
     //
   }
