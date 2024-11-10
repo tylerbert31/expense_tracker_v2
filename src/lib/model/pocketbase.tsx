@@ -11,6 +11,15 @@ class TodayModel extends AppModel {
     return await this.findOne();
   }
 
+  async afterSaveSum(): Promise<number> {
+    try {
+      const data = await pb.collection("expense_wholeday").getOne("1");
+      return Number(data?.total) || 0;
+    } catch (error) {
+      return 0;
+    }
+  }
+
   async sumWithDate(date: string): Promise<number> {
     const wholeDay = await this.findAll({
       filter: `created ~ '${date}'`,
